@@ -1,0 +1,106 @@
+﻿@model QuizMe.ViewModels.QuizViewModel
+@{
+    ViewData["Title"] = "Teacher Dashboard Page";
+}
+
+@if (TempData["EditedQuiz"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["EditedQuiz"]
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["Error"]
+    </div>
+}
+
+<h4>Create a Quiz</h4>
+
+<div class="row">
+    <div class="col-lg-4">
+        <form asp-action="Generate" method="get">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group" style="margin-bottom:none">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<hr />
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.Message
+        Click <b>Create </b>to create one now!
+    </div>
+}else{
+    <div class="row">
+        @foreach (var quiz in Model.Quizzes)
+        {
+            <div class="card col-lg-12 p-0 border-info" style="border-radius:10px; margin:5px">
+                <div class="card-header border-info">
+                    @quiz.Name
+                </div>
+                <div class="card-body text-info">
+                    <div class="row">
+                        <div class="col-6">
+                            <h5 class="card-title mb-2"> @quiz.Description</h5>
+                            <h6 class="card-text mb-2"> Duration : @quiz.Duration minutes</h6>
+                            <h6 class="card-text mb-2"> No of questions : @quiz.NumberOfQuestions</h6>
+                            <br>
+                            <h6 class="card-subtitle mb-2 text-muted"> Code : @quiz.Code</h6>
+                            <form class="form-inline" action="/Teacher/Quiz/@quiz.QuizId" method="get">
+                                <input type="hidden" value="@quiz.QuizId" name="Id" />
+                                <button class="btn btn-primary" type="submit">Edit Quiz</button>
+                            </form>
+                        </div>
+                        <div class="col-6">
+                            <h6 class="card-text mb-2"> Lowest: @quiz.lowest</h6>
+                            <h6 class="card-text mb-2"> Highest : @quiz.highest</h6>
+                            <h6 class="card-text mb-2"> Mean : @quiz.mean</h6>
+                            <h6 class="card-text mb-2"> No of students attempted : @quiz.NumberOfStudents</h6>
+                            @*<form method="post" action="/Teacher/Delete">
+                    <input type="hidden" value="@quiz.QuizId" name="quiz_id" />
+                    </form>*@
+                            <button class="btn btn-danger" style="margin-top:22px" id="@quiz.QuizId" onclick="delete_quiz(this)">Delete Quiz</button>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        }
+    </div>
+}
+
+
+
+<script>
+
+    function delete_quiz(btn) {
+        var quiz_id = btn.id;
+        console.log(quiz_id);
+        if (confirm('Are you sure you want to delete this quiz')) {
+            var url = '@Url.Action("Delete","Teacher")';
+            console.log(url);
+            //Delete
+            $.post(url,
+              {
+                quiz_id: quiz_id
+              },
+              function(data, status){
+                window.location.href = "/Teacher/Index"
+              });
+            
+        } else {
+             // Do nothing!
+            console.log("You did not delete the quiz");
+        }
+    }
+
+   
+
+</script>

@@ -1,0 +1,29 @@
+﻿@model List<QuizMe.ViewModels.CompletedQuizzesViewModel>
+@{
+    ViewData["Title"] = "View your quizzes";
+}
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.Message
+    </div>
+}else{
+    <div class="row">
+        @foreach (var quiz in Model)
+        {
+            <div class="card col-8 p-0 border-success" style="border-radius:10px; margin:10px">
+                <div class="card-header border-success">
+                    @quiz.quizRoom.Name
+                </div>
+                <div class="card-body text-success">
+                    <h5 class="card-title">@quiz.quizRoom.Description</h5>
+                    <h6 class="card-text mb-2"> No of questions : @quiz.quizRoom.NumberOfQuestions</h6>
+                    <h6 class="card-text mb-2 text-muted">Your Score : @quiz.score</h6>
+                    
+                </div>
+            </div>
+        }
+    </div>
+}
+

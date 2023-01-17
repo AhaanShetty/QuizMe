@@ -1,0 +1,72 @@
+﻿@model QuizMe.ViewModels.CreateQuizViewModel
+
+@{
+    ViewData["Title"] = "Generate Quiz Details";
+}
+
+<h1>Create a quiz</h1>
+
+@{
+    if (TempData.Peek("InvalidQuestionCount") != null)
+    {
+        <h3>@TempData.Peek("InvalidQuestionCount")</h3>
+    }
+}
+
+<div class="row">
+    <div class="col-6">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="@Model.QuizRoom.Name"></label>
+                <input asp-for="@Model.QuizRoom.Name" class="form-control" />
+                <span asp-validation-for="@Model.QuizRoom.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group row">
+                <div class="col-5">
+                    <label asp-for="@Model.QuizRoom.Code"></label>
+                    <input asp-for="@Model.QuizRoom.Code" class="form-control" id="Code" readonly/>
+                    <span asp-validation-for="@Model.QuizRoom.Code" class="text-danger"></span>
+                </div>
+                <div class="col-5" style="height:25px; margin-top:32px">
+                    <button value="Create" class="btn btn-success" id="GenCode"/> Generate Code
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.QuizRoom.NumberOfQuestions"></label>
+                <input asp-for="@Model.QuizRoom.NumberOfQuestions" class="form-control" />
+                <span asp-validation-for="@Model.QuizRoom.NumberOfQuestions" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.QuizRoom.Duration"></label>
+                <input asp-for="@Model.QuizRoom.Duration" class="form-control" />
+                <span asp-validation-for="@Model.QuizRoom.Duration" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.QuizRoom.Description"></label>
+                <textarea asp-for="@Model.QuizRoom.Description" class="form-control" ></textarea>
+                <span asp-validation-for="@Model.QuizRoom.Description" class="text-danger"></span>
+            </div>
+            <button type="submit" value="Create" class="btn btn-primary" /> Add Questions
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script type="text/javascript"> 
+        $("#GenCode").click(function(){
+            $.ajax({
+                type: "GET",
+                url: '/Teacher/GenerateCode',
+                dataType: 'json',
+                success: function(data){
+                    var code_element = document.getElementById("Code");
+                    code_element.value = data.code;
+                }
+            })
+        });
+    </script>
+ }

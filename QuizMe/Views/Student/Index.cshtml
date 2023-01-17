@@ -1,0 +1,42 @@
+﻿@model QuizMe.ViewModels.QuizViewModel
+@{
+    ViewData["Title"] = "Student Dashboard Page";
+}
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.Error
+    </div>
+}
+@if (ViewBag.Info != null)
+{
+    <div class="alert alert-success" role="alert">
+        @ViewBag.Info
+    </div>
+}
+
+<div class="row">
+    @foreach (var quiz in Model.Quizzes)
+    {
+        <div class="card col-5 p-0 border-info" style="border-radius:10px; margin:10px">
+            <div class="card-header border-info">
+                @quiz.Name
+            </div>
+            <div class="card-body text-info">
+                <h5 class="card-title">@quiz.Description</h5>
+                <h6 class="card-text">Duration: @quiz.Duration minutes</h6>
+                <h6 class="card-text mb-2"> No of questions : @quiz.NumberOfQuestions</h6>
+                <h6 class="card-text mb-2 text-muted">Created by @quiz.Teacher_name</h6>
+                <form class="form-inline" action="/Student/Index" method="post" style="padding:5px">
+                     @Html.AntiForgeryToken()
+                    <input type="hidden" value="@quiz.QuizId" name="Id" />
+                    <button class="btn btn-info" type="submit">Submit Code</button>
+                    <div class="form-group mb-2" style="margin-left:15px; margin-top:5px">
+                        <input type="text" name="Code" placeholder="Enter quiz code" required style="border-radius:5px"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+</div>

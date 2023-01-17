@@ -1,0 +1,70 @@
+﻿@using QuizMe.Areas.Identity.Data
+@model IEnumerable<ApplicationUser>
+
+@{
+    ViewData["Title"] = "Users Page";
+}
+
+<h3>Manage Users</h3>
+
+@if (Model.Any())
+{
+        <div class="row">
+            <table class="table">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">UserName</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Approval</th>
+                        <th scope="col">Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @{
+                    int i = 1;
+                }
+                @foreach (var user in Model)
+                {
+                            <tr>
+                                <th scope="row">@i</th>
+                                <td>@user.UserName</td>
+                                <td>@user.Email</td>
+                                <td>@user.Role</td>
+                                <form action="/Admin/Approve" method="post">
+                                    @Html.AntiForgeryToken()
+                            @if (@user.Role == "Student")
+                            {
+                                        <td>Not Applicable</td>
+                            }
+                            else
+                            {
+                                if (@user.Role == "Teacher" && @user.isAdminApproved)
+                                {
+                                                <td>Approved</td>
+                                }
+                                else
+                                {
+                                                <td><button class="btn btn-success">Approve</button></td>
+                                }
+                            }
+                                <input type="hidden" value="@user.Id" name="Teacher_Id">
+                                </form>
+                                <form action="/Admin/Delete" method="post">
+                            @Html.AntiForgeryToken()
+                                    <input type="hidden" value="@user.Id" name="User_Id">
+                                    <td><button class="btn btn-danger">Delete</button></td>
+                                </form>
+                            </tr>
+                    i++;
+                }
+                </tbody>
+            </table>
+        </div>
+}
+else
+{
+        <h5>No users registered</h5>
+}
+

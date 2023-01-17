@@ -1,0 +1,73 @@
+﻿@model List<Question>
+@{
+    ViewData["Title"] = "Quiz Room Page";
+}
+
+<form action="/Student/Submit" id="submit_quiz" method="post">
+    @Html.AntiForgeryToken()
+    <div class="row" style="margin-bottom:10px">
+        <div class="col-4" style="justify-content:left">
+            Time Remaining: <span id="time">@ViewBag.Quiz_Details.Duration:00</span> minutes!
+        </div>
+        <div class="col-8" style="justify-content:right">
+            <button class="btn btn-primary" id="end_test" type="submit">End Quiz</button>
+        </div>
+    </div>
+
+    <div style="margin-bottom:5px">
+        <b>Quiz Name: @ViewBag.Quiz_Details.Name</b>
+    </div>
+    <div style="margin-bottom:5px">
+        <b>Quiz Description: @ViewBag.Quiz_Details.Description</b>
+    </div>
+    <input type="hidden" name="Quiz_Id" value="@ViewBag.Quiz_Details.QuizId" />
+    @foreach (var question in Model)
+    {
+        <div class="card" style="border-radius:10px; margin-bottom:10px">
+            <div class="card-header">
+                @question.Text
+            </div>
+            <div class="card-body">
+                @foreach (var answer in question.Answers)
+                {
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="Question#@question.Id" id="answer#@question.Id#@answer.Id" value="@question.Id#@answer.Id" > @answer.Text
+                        </label>
+
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</form>
+
+
+<script>
+    function startTimer(duration, display) {
+        var timer = duration, minutes, seconds;
+        setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.textContent = minutes + ":" + seconds;
+
+            if (--timer < 0) {
+                document.getElementById("end_test").click();
+                
+            }
+        }, 1000);
+    }
+
+    window.onload = function () {
+        var quiz_time = 60 * parseInt(@ViewBag.Quiz_Details.Duration),
+            display = document.querySelector('#time');
+        startTimer(quiz_time, display);
+    };
+
+
+    
+</script>
